@@ -89,6 +89,8 @@ services:
       MONGO_DATABASE: 'alerts'
       MONGO_URI: 'mongodb://root:password@mongodb:27017/?authSource=admin'
 
+    ports:
+      - '8080:8080'
 
 volumes:
   mongo_data:

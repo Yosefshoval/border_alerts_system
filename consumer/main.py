@@ -22,7 +22,7 @@ def add_timestamp(alert: dict):
 
 def listener(queue_name: str):
     while True:
-        time.sleep(0.5)
+        time.sleep(0.1)
         try:
             logger.info(f'Messages waite in queue {queue_name}: {r.llen(name=queue_name)}')
             if r.llen(name=queue_name) == 0:
