@@ -79,6 +79,17 @@ services:
         condition: service_healthy
 
 
+  api:
+    build:
+      context: analytics_api
+      dockerfile: Dockerfile
+
+    environment:
+      MONGO_COLLECTION: 'alerts'
+      MONGO_DATABASE: 'alerts'
+      MONGO_URI: 'mongodb://root:password@mongodb:27017/?authSource=admin'
+
+
 volumes:
   mongo_data:
   redis_data:
