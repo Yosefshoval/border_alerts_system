@@ -25,9 +25,14 @@ def five_top_zones():
         {
             "$group": {
                 "_id" : "$zone",
-                "alerts_count" : {"$count" : {}}
+                "alerts_count" : {"$sum" : 1}
             }
-        }
+        },
+        {
+            "$sort": {"alerts_count": -1}
+        },
+        { "$limit": 5 }
+
     ])
 
     dict_result = result.to_list()
