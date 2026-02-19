@@ -42,7 +42,12 @@ def five_top_zones():
 def distribution():
     cursor = get_collection()
     result = cursor.aggregate([
-        {},
+        {
+            "$group": {
+                "_id": "$distance_from_fence_m",
+                "alerts_count": {"$sum": 1}
+            }
+        },
         {}
     ])
 
