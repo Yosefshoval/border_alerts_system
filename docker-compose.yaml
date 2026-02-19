@@ -2,7 +2,6 @@ version: '3.8'
 
 services:
 
-
   redis:
     image: redis:latest
     container_name: redis_alert_system
@@ -51,30 +50,23 @@ services:
       context: .
       dockerfile: producer/Dockerfile
 
-
     environment:
-      MONGODB_COLLECTION: 'alerts'
-      MONGODB_DATABASE: 'alerts'
-      MONGO_URI: 'mongodb://root:password@mongodb:27017/?authSource=admin'
-
       REDIS_HOST: 'redis'
       REDIS_PORT: '6379'
 
     depends_on:
       redis:
         condition: service_healthy
-      mongodb:
-        condition: service_healthy
+
 
   consumer:
     build:
       context: .
       dockerfile: consumer/Dockerfile
 
-
     environment:
-      MONGODB_COLLECTION: 'alerts'
-      MONGODB_DATABASE: 'alerts'
+      MONGO_COLLECTION: 'alerts'
+      MONGO_DATABASE: 'alerts'
       MONGO_URI: 'mongodb://root:password@mongodb:27017/?authSource=admin'
 
       REDIS_HOST: 'redis'

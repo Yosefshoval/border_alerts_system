@@ -1,5 +1,6 @@
 import redis
 import logging
+from os import getenv
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
