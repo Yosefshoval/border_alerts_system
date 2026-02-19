@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+
+  consumer:
+    build:
+      context: .
+      dockerfile: consumer/Dockerfile
+
+
+    environment:
+      MONGODB_COLLECTION: 'pizza_orders'
+      MONGODB_DATABASE: 'pizza_orders'
+      MONGO_URI: 'mongodb://root:password@mongodb:27017/?authSource=admin'
+
+      REDIS_HOST: 'redis'
+      REDIS_PORT: '6379'
+
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
