@@ -13,7 +13,9 @@ TTL = 20
 REDIS_HOST = getenv('REDIS_HOST', 'redis')
 REDIS_PORT = getenv('REDIS_PORT', 6379)
 
-r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=0)
+r = redis.Redis(host=REDIS_HOST, port=int(REDIS_PORT), db=0)
+
+logger.info('redis producer created')
 
 urge = "queue_urge"
 normal = "queue_normal"
@@ -29,5 +31,5 @@ def push_alert(alert: dict):
         json.dumps(alert)
     )
     logger.info(f'alert {alert["border"]} pushed to queue {queue}')
-    logger.info(f'queue {queue} now has {que.llen("queue_orders")} alerts.')
+    logger.info(f'queue {queue} now has {r.llen("queue_orders")} alerts.')
     return True
