@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+
+  redis:
+    image: redis:latest
+    container_name: redis_orders
+    ports:
+      - '6379:6379'
+    healthcheck:
+      test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+
+    volumes:
+      - redis_data:/data
+
+
+  redis_ui:
+    image: redis/redisinsight:latest
+    container_name: redis_orders_ui
+    ports:
+      - '5540:5540'
+    depends_on:
+      - redis
+
+
+  mongodb:
+    image: docker.io/library/mongo:7.0
+    container_name: pizza_orders_mongo
+    restart: always
+    ports:
+      - '27017:27017'
+
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+      MONGO_INITDB_DATABASE: ''
+
+    volumes:
+      - mongo_data:/data/db
+
+
+volumes:
+  mongo_data:
+  redis_data:
