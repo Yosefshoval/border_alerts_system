@@ -2,9 +2,10 @@ version: '3.8'
 
 services:
 
+
   redis:
     image: redis:latest
-    container_name: redis_orders
+    container_name: redis_alert_system
     ports:
       - '6379:6379'
     healthcheck:
@@ -16,7 +17,7 @@ services:
 
   redis_ui:
     image: redis/redisinsight:latest
-    container_name: redis_orders_ui
+    container_name: redis_ui_alert_system
     ports:
       - '5540:5540'
     depends_on:
@@ -25,7 +26,7 @@ services:
 
   mongodb:
     image: docker.io/library/mongo:7.0
-    container_name: pizza_orders_mongo
+    container_name: mongo_alert_system
     restart: always
     ports:
       - '27017:27017'
@@ -39,7 +40,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: password
-      MONGO_INITDB_DATABASE: ''
+      MONGO_INITDB_DATABASE: 'alerts'
 
     volumes:
       - mongo_data:/data/db
@@ -50,9 +51,40 @@ services:
       context: .
       dockerfile: producer/Dockerfile
 
+
     environment:
+      MONGODB_COLLECTION: 'alerts'
+      MONGODB_DATABASE: 'alerts'
+      MONGO_URI: 'mongodb://root:password@mongodb:27017/?authSource=admin'
+
       REDIS_HOST: 'redis'
       REDIS_PORT: '6379'
+
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+
+  consumer:
+    build:
+      context: .
+      dockerfile: consumer/Dockerfile
+
+
+    environment:
+      MONGODB_COLLECTION: 'alerts'
+      MONGODB_DATABASE: 'alerts'
+      MONGO_URI: 'mongodb://root:password@mongodb:27017/?authSource=admin'
+
+      REDIS_HOST: 'redis'
+      REDIS_PORT: '6379'
+
+    depends_on:
+      redis:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
 
 
 volumes:
