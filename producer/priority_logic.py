@@ -1,5 +1,7 @@
+import logging
 
-
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)
 
 
 def determine_priority(alert: dict):
@@ -16,4 +18,6 @@ def determine_priority(alert: dict):
         alert['priority'] = "URGENT"
     else:
         alert['priority'] = "NORMAL"
+    logger.info(f'priority determined: {alert}')
     return alert
+

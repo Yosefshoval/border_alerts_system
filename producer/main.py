@@ -1,7 +1,8 @@
 from confluent_kafka import Producer
 import logging
 import json
-
+from priority_logic import determine_priority
+from redis_connection import push_alert
 
 
 logger = logging.getLogger(__name__)
@@ -14,10 +15,6 @@ file_path = 'border_alerts.json'
 producer_config = {
 
 }
-x = "queue_urge"
-y = "queue_normal"
-
-new_field = "priority" ('URGENT', 'NORMAL')
 
 producer = Producer(producer_config)
 logger.info('producer created')
@@ -30,3 +27,17 @@ def open_file():
 
 
 
+def main():
+    try:
+        data = open_file()
+        if not data:
+            raise Exception('not data found')
+
+        for alert in data:
+            updated_alert = determine_priority(alert=alert)
+            logger.info(f'updated_alert: {updated_alert}')
+            pushed = push_alert(updated_alert)
+            logger.info('alert pushed successfully.')
+
+    except Exception as e:
+        logger.error(e)
